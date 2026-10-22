@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from .models import Food, Medicine
+from models import Food, Medicine
 
 
 class AbstractTamagochi(ABC):
@@ -71,3 +71,75 @@ class AbstractTamagochi(ABC):
         Должен использоваться после каждого взаимодействия с тамагочи
         """
         raise NotImplementedError
+
+
+class BearTamagochi(AbstractTamagochi):
+    """Реализация тамагочи-медведя"""
+
+    def __init__(self) -> None:
+        """Инициализатор класса"""
+        self._status = {
+            'hunger': 100,
+            'happiness': 100,
+            'health': 100
+        }
+
+    @property
+    def status(self) -> dict[str, int]:
+        """
+        Свойство для доступа ко всем состояниям тамагочи
+
+        :return: словарь со всеми состояниями тамагочи
+        """
+        return self._status
+
+    @property
+    def is_alive(self) -> bool:
+        """
+        Метод для проверки жив ли тамагочи
+
+        :return: True если жив, иначе False
+        """
+        return self.status['health'] > 0
+
+    @property
+    def is_sick(self) -> bool:
+        """
+        Метод для проверки, не заболел ли тамагочи
+
+        :return: True если тамагочи болеет, иначе False
+        """
+        return self.status['health'] < 50
+
+    def feed(self, food: Food) -> None:
+        """
+        Метод для кормления тамагочи
+
+        :param food: объект еды для кормления
+        """
+        self.status['hunger'] += food.satiety
+
+    def play(self) -> None:
+        """Метод для игры с тамагочи"""
+        self.status['happiness'] += 10
+        self.status['hunger'] -= 10
+
+    def rest(self) -> None:
+        """Метод для отдыха тамагочи"""
+        self.status['health'] += 30
+        self.status['hunger'] -= 10
+
+    def heal(self, medicine: Medicine) -> None:
+        """
+        Метод для лечения тамагочи
+
+        :param medicine: лекарство для лечения
+        """
+        self.status['health'] += medicine.heal_hp
+
+    def update(self) -> None:
+        """
+        Метод для обновления состояний тамагочи.
+        Должен использоваться после каждого взаимодействия с тамагочи
+        """
+        raise NotImplementedError()
