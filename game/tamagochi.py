@@ -84,7 +84,7 @@ class BearTamagochi(AbstractTamagochi):
             'energy': 100,
             'hunger': 100,
             'happiness': 100,
-            'health': 100
+            'hp': 100
         }
 
     @staticmethod
@@ -113,7 +113,7 @@ class BearTamagochi(AbstractTamagochi):
 
         :return: True если жив, иначе False
         """
-        return self.status['health'] > 0
+        return self.status['hp'] > 0
 
     @property
     def is_sick(self) -> bool:
@@ -122,7 +122,7 @@ class BearTamagochi(AbstractTamagochi):
 
         :return: True если тамагочи болеет, иначе False
         """
-        return self.status['health'] < 50
+        return self.status['hp'] < 50
 
     @tamagochi_update
     def feed(self, food: Food) -> None:
@@ -131,7 +131,7 @@ class BearTamagochi(AbstractTamagochi):
 
         :param food: объект еды для кормления
         """
-        self.update_status_attr('hunger', food.satiety)
+        self.update_status_attr('hunger', -food.satiety)
 
     @tamagochi_update
     def play(self) -> None:
@@ -142,7 +142,7 @@ class BearTamagochi(AbstractTamagochi):
     @tamagochi_update
     def rest(self) -> None:
         """Метод для отдыха тамагочи"""
-        self.update_status_attr('health', 30 if not self.is_sick else 15)
+        self.update_status_attr('hp', 30 if not self.is_sick else 15)
         self.update_status_attr('hunger', -10)
         self.update_status_attr('happiness', 5)
         self._status['energy'] = 100 if not self.is_sick else 80
@@ -154,7 +154,7 @@ class BearTamagochi(AbstractTamagochi):
 
         :param medicine: лекарство для лечения
         """
-        self.update_status_attr('health', medicine.heal_hp)
+        self.update_status_attr('hp', medicine.heal_hp)
 
     def update(self) -> None:
         """
@@ -162,10 +162,10 @@ class BearTamagochi(AbstractTamagochi):
         Должен использоваться после каждого взаимодействия с тамагочи
         """
         self.update_status_attr('energy', -randint(5, 20))
-        self.update_status_attr('health', -randint(0, 5))
+        self.update_status_attr('hp', -randint(0, 5))
         self.update_status_attr('hunger', -randint(0, 5))
         self.update_status_attr('happiness', -randint(0, 3))
-        self.update_status_attr('health', -randint(0, 5))
+        self.update_status_attr('hp', -randint(0, 5))
 
     @tamagochi_update
     def work(self, coins: int):

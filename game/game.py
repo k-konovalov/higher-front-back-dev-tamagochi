@@ -102,9 +102,6 @@ class AbstractGame(ABC):
 class Game(AbstractGame):
     """Логика игры"""
 
-    _food_bag: list[Food] = []
-    _medicine_bag: list[Medicine] = []
-
     def __init__(
         self,
         tamagochi: BearTamagochi,
@@ -116,6 +113,8 @@ class Game(AbstractGame):
         self.clicker = clicker
         self.all_food = all_food
         self.all_medicine = all_medicine
+        self._food_bag: list[Food] = []
+        self._medicine_bag: list[Medicine] = []
 
     def work(self) -> int:
         self.clicker.click()
@@ -128,7 +127,7 @@ class Game(AbstractGame):
         to_container: list[Food | Medicine],
     ) -> None:
         chosen_one: Food | Medicine = choice(from_container)
-        if (self.tamagochi.status['coins'] > chosen_one.price):
+        if self.tamagochi.status['coins'] >= chosen_one.price:
             to_container.append(chosen_one)
             self.tamagochi.update_status_attr('coins', -chosen_one.price)
 

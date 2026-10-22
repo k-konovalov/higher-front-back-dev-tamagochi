@@ -47,7 +47,7 @@ def main() -> None:
 
         status = game.get_status()
         print(
-            f"\nСтатус: голод {status['hunger']}, здоровье {status['health']},"
+            f"\nСтатус: голод {status['hunger']}, здоровье {status['hp']},"
             f"энергия {status['energy']}, монет {status['coins']}\n"
         )
         if game.tamagochi.is_sick:
