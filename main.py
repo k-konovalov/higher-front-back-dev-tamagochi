@@ -93,6 +93,7 @@ def main() -> None:
             case _:
                 output = "Неверная команда"
         os.system('clear')
+    print('=======')
     print('The end!')
 
 

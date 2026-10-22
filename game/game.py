@@ -120,7 +120,6 @@ class Game(AbstractGame):
     def work(self) -> int:
         self.clicker.click()
         self.tamagochi.work(self.clicker.income_per_click)
-        self.tamagochi.update()
         return self.clicker.income_per_click
 
     def random_buy(
@@ -132,43 +131,36 @@ class Game(AbstractGame):
         if (self.tamagochi.status['coins'] > chosen_one.price):
             to_container.append(chosen_one)
             self.tamagochi.update_status_attr('coins', -chosen_one.price)
-        self.tamagochi.update()
 
     def buy_food(self) -> None:
         self.random_buy(
             from_container=self.all_food,
             to_container=self._food_bag,
         )
-        self.tamagochi.update()
 
     def buy_medicine(self) -> None:
         self.random_buy(
             from_container=self.all_medicine,
             to_container=self._medicine_bag,
         )
-        self.tamagochi.update()
 
     def feed_tamagochi(self) -> None:
         if len(self._food_bag) == 0:
             return
         else:
             self.tamagochi.feed(self._food_bag.pop())
-        self.tamagochi.update()
 
     def heal_tamagochi(self) -> None:
         if len(self._medicine_bag) == 0:
             return
         else:
             self.tamagochi.heal(self._medicine_bag.pop())
-        self.tamagochi.update()
 
     def rest_tamagochi(self):
-        self.tamagochi.update()
         self.tamagochi.rest()
 
     def play_with_tamagochi(self):
         self.tamagochi.play()
-        self.tamagochi.update()
 
     def get_status(self) -> dict[str, Any]:
         return self.tamagochi.status

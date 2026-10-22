@@ -87,6 +87,16 @@ class BearTamagochi(AbstractTamagochi):
             'health': 100
         }
 
+    @staticmethod
+    def tamagochi_update(func):
+        def wrapper(*args, **kwargs):
+            for arg in args:
+                if isinstance(arg, AbstractTamagochi):
+                    tamagochi: AbstractTamagochi = arg
+                    tamagochi.update()
+            func(*args, **kwargs)
+        return wrapper
+
     @property
     def status(self) -> dict[str, int]:
         """
@@ -114,6 +124,7 @@ class BearTamagochi(AbstractTamagochi):
         """
         return self.status['health'] < 50
 
+    @tamagochi_update
     def feed(self, food: Food) -> None:
         """
         Метод для кормления тамагочи
@@ -122,11 +133,13 @@ class BearTamagochi(AbstractTamagochi):
         """
         self.update_status_attr('hunger', food.satiety)
 
+    @tamagochi_update
     def play(self) -> None:
         """Метод для игры с тамагочи"""
         self.update_status_attr('happiness', 30)
         self.update_status_attr('hunger', -10)
 
+    @tamagochi_update
     def rest(self) -> None:
         """Метод для отдыха тамагочи"""
         self.update_status_attr('health', 30 if not self.is_sick else 15)
@@ -134,6 +147,7 @@ class BearTamagochi(AbstractTamagochi):
         self.update_status_attr('happiness', 5)
         self._status['energy'] = 100 if not self.is_sick else 80
 
+    @tamagochi_update
     def heal(self, medicine: Medicine) -> None:
         """
         Метод для лечения тамагочи
@@ -152,7 +166,13 @@ class BearTamagochi(AbstractTamagochi):
         self.update_status_attr('hunger', -randint(0, 5))
         self.update_status_attr('happiness', -randint(0, 3))
         self.update_status_attr('health', -randint(0, 5))
-        
+
+    @tamagochi_update
+    def work(self, coins: int):
+        self.update_status_attr('coins', coins)
+        self.update_status_attr('energy', -20)
+        self.update_status_attr('hunger', -5)
+
     def update_status_attr(self, key: str, value: int):
         new_value = self.status[key] + value
         if new_value <= 0:
@@ -161,10 +181,3 @@ class BearTamagochi(AbstractTamagochi):
             self._status[key] = 100
         else:
             self._status[key] = new_value
-        
-    def work(self, coins: int):
-        self.update_status_attr('coins', coins)
-        self.update_status_attr('energy', -20)
-        self.update_status_attr('hunger', -5)
-        pass
-        
