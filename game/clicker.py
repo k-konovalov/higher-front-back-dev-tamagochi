@@ -25,6 +25,7 @@ class AbstractClicker(ABC):
 
 class DummyClicker(AbstractClicker):
     """Реализация кликера-работы"""
+
     def __init__(self, income_per_click: int) -> None:
         """
         Инициализатор класса
@@ -64,3 +65,4 @@ class DummyClicker(AbstractClicker):
         :return: суммарное число выполненных кликов
         """
         return self._click_total
+

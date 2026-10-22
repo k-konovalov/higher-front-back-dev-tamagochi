@@ -2,7 +2,7 @@
 
 from abc import ABC, abstractmethod
 
-from models import Food, Medicine
+from .models import Food, Medicine
 
 
 class AbstractTamagochi(ABC):
@@ -79,6 +79,8 @@ class BearTamagochi(AbstractTamagochi):
     def __init__(self) -> None:
         """Инициализатор класса"""
         self._status = {
+            'coins': 0,
+            'energy': 100,
             'hunger': 100,
             'happiness': 100,
             'health': 100
@@ -126,8 +128,9 @@ class BearTamagochi(AbstractTamagochi):
 
     def rest(self) -> None:
         """Метод для отдыха тамагочи"""
-        self.status['health'] += 30
+        self.status['health'] += 30 if not self.is_sick else 15
         self.status['hunger'] -= 10
+        self.status['happiness'] += 5
 
     def heal(self, medicine: Medicine) -> None:
         """
