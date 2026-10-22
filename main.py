@@ -2,7 +2,7 @@ import os
 
 from game.models import Food, Medicine
 from game.tamagochi import AbstractTamagochi
-from game.clicker import AbstractClicker
+from game.clicker import DummyClicker
 from game.game import AbstractGame
 
 
@@ -23,7 +23,7 @@ def main():
 
     #  Вместо AbstractClicker импортируйте
     #  и создайте инстанс от своей реализации
-    clicker = AbstractClicker(10, 20)
+    clicker = DummyClicker(income_per_click=10)
 
     #  Вместо AbstractGame импортируйте
     #  и создайте инстанс от своей реализации
