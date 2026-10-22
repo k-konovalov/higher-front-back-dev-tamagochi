@@ -40,6 +40,7 @@ def main() -> None:
 
     while True:
         print(output)
+        print('=======')
 
         print(f"Сумка с едой: {game.food}")
         print(f"Сумка с лекарствами: {game.medicine}")
@@ -49,7 +50,6 @@ def main() -> None:
             f"\nСтатус: голод {status['hunger']}, здоровье {status['health']},"
             f"энергия {status['energy']}, монет {status['coins']}\n"
         )
-
         if game.tamagochi.is_sick:
             print("=======Тамагочи болеет======")
             print("=======Отдых действует менее эффективно=======")
@@ -92,7 +92,6 @@ def main() -> None:
                 break
             case _:
                 output = "Неверная команда"
-
         os.system('clear')
     print('The end!')
 

@@ -1,6 +1,7 @@
 """Модуль с интерфейсом и реализациями класса тамагочи"""
 
 from abc import ABC, abstractmethod
+from random import randint
 
 from .models import Food, Medicine
 
@@ -119,18 +120,19 @@ class BearTamagochi(AbstractTamagochi):
 
         :param food: объект еды для кормления
         """
-        self.status['hunger'] += food.satiety
+        self.update_status_attr('hunger', food.satiety)
 
     def play(self) -> None:
         """Метод для игры с тамагочи"""
-        self.status['happiness'] += 10
-        self.status['hunger'] -= 10
+        self.update_status_attr('happiness', 30)
+        self.update_status_attr('hunger', -10)
 
     def rest(self) -> None:
         """Метод для отдыха тамагочи"""
-        self.status['health'] += 30 if not self.is_sick else 15
-        self.status['hunger'] -= 10
-        self.status['happiness'] += 5
+        self.update_status_attr('health', 30 if not self.is_sick else 15)
+        self.update_status_attr('hunger', -10)
+        self.update_status_attr('happiness', 5)
+        self._status['energy'] = 100 if not self.is_sick else 80
 
     def heal(self, medicine: Medicine) -> None:
         """
@@ -138,11 +140,31 @@ class BearTamagochi(AbstractTamagochi):
 
         :param medicine: лекарство для лечения
         """
-        self.status['health'] += medicine.heal_hp
+        self.update_status_attr('health', medicine.heal_hp)
 
     def update(self) -> None:
         """
         Метод для обновления состояний тамагочи.
         Должен использоваться после каждого взаимодействия с тамагочи
         """
-        raise NotImplementedError()
+        self.update_status_attr('energy', -randint(5, 20))
+        self.update_status_attr('health', -randint(0, 5))
+        self.update_status_attr('hunger', -randint(0, 5))
+        self.update_status_attr('happiness', -randint(0, 3))
+        self.update_status_attr('health', -randint(0, 5))
+        
+    def update_status_attr(self, key: str, value: int):
+        new_value = self.status[key] + value
+        if new_value <= 0:
+            self._status[key] = 0
+        elif new_value >= 100:
+            self._status[key] = 100
+        else:
+            self._status[key] = new_value
+        
+    def work(self, coins: int):
+        self.update_status_attr('coins', coins)
+        self.update_status_attr('energy', -20)
+        self.update_status_attr('hunger', -5)
+        pass
+        
