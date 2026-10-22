@@ -1,12 +1,13 @@
 import os
 
 from game.models import Food, Medicine
-from game.tamagochi import AbstractTamagochi
+from game.tamagochi import BearTamagochi
 from game.clicker import DummyClicker
 from game.game import AbstractGame
 
 
-def main():
+def main() -> None:
+    """Основная функция для запуска игры"""
     all_food = [
         Food(name='Бургер', satiety=20, price=40),
         Food(name='Салат', satiety=10, price=20),
@@ -19,7 +20,7 @@ def main():
 
     #  Вместо AbstractTamagochi импортируйте
     #  и создайте инстанс от своей реализации
-    tamagochi = AbstractTamagochi()
+    tamagochi = BearTamagochi()
 
     #  Вместо AbstractClicker импортируйте
     #  и создайте инстанс от своей реализации
