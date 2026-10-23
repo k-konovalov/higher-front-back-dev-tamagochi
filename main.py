@@ -3,7 +3,7 @@ import os
 from game.models import Food, Medicine
 from game.tamagochi import BearTamagochi
 from game.clicker import DummyClicker
-from game.game import AbstractGame
+from game.game import Game
 
 
 def main() -> None:
@@ -15,20 +15,12 @@ def main() -> None:
     ]
 
     all_medicine = [
-        Medicine(name='Ибупрофен', price=30, heal_hp=20, number_of_uses=2)
+        Medicine(name='Ибупрофен', price=30, heal_hp=20, number_of_uses=1)
     ]
 
-    #  Вместо AbstractTamagochi импортируйте
-    #  и создайте инстанс от своей реализации
     tamagochi = BearTamagochi()
-
-    #  Вместо AbstractClicker импортируйте
-    #  и создайте инстанс от своей реализации
     clicker = DummyClicker(income_per_click=10)
-
-    #  Вместо AbstractGame импортируйте
-    #  и создайте инстанс от своей реализации
-    game = AbstractGame(
+    game = Game(
         tamagochi,
         clicker,
         all_food=all_food,
@@ -40,18 +32,23 @@ def main() -> None:
 
     while True:
         print(output)
+        print('=======')
 
         print(f"Сумка с едой: {game.food}")
         print(f"Сумка с лекарствами: {game.medicine}")
 
         status = game.get_status()
         print(
-            f"\nСтатус: голод {status['hunger']}, здоровье {status['hp']}, "
+            f"\nСтатус: голод {status['hunger']}, здоровье {status['hp']},"
             f"энергия {status['energy']}, монет {status['coins']}\n"
         )
-        if game.tamagochi.is_sick():
+        if game.tamagochi.is_sick:
             print("=======Тамагочи болеет======")
             print("=======Отдых действует менее эффективно=======")
+        if (not game.tamagochi.is_alive):
+            print("=======Тамагочи умер======")
+            print("Живи теперь с этим. Или заведи нового.")
+            break
         print("1. Пойти на работу")
         print("2. Купить еду")
         print("3. Купить лекарство")
@@ -65,16 +62,18 @@ def main() -> None:
             case "1":
                 income = game.work()
                 output = f'Вы заработали {income} монет'
-                game.tamagochi.update()
             case "2":
                 game.buy_food()
+                output = 'Вы сходили в магазин'
             case "3":
                 game.buy_medicine()
+                output = 'Вы сходили в аптеку'
             case "4":
                 game.feed_tamagochi()
-
+                output = 'Вы попытались покормить тамагочи'
             case "5":
                 game.heal_tamagochi()
+                output = 'Вы попытались вылечить тамагочи'
             case "6":
                 game.play_with_tamagochi()
                 output = 'Вы поиграли с питомцем'
@@ -85,8 +84,9 @@ def main() -> None:
                 break
             case _:
                 output = "Неверная команда"
-
         os.system('clear')
+    print('=======')
+    print('The end!')
 
 
 if __name__ == "__main__":

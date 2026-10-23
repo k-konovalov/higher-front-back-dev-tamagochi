@@ -2,7 +2,8 @@
 
 from abc import ABC, abstractmethod
 
-from models import Food, Medicine
+from .models import Food, Medicine
+from .exceptions import TamagochiIsGone
 
 
 class AbstractTamagochi(ABC):
@@ -74,72 +75,125 @@ class AbstractTamagochi(ABC):
 
 
 class BearTamagochi(AbstractTamagochi):
-    """Реализация тамагочи-медведя"""
+    """Реализация тамагочи — медвежонок"""
 
     def __init__(self) -> None:
-        """Инициализатор класса"""
-        self._status = {
-            'hunger': 100,
-            'happiness': 100,
-            'health': 100
-        }
+        """
+        Инициализатор класса.
+
+        Создаёт питомца со стандартными параметрами:
+        голод=0 (сыт), энергия=100, здоровье=100, не болен.
+        """
+        self.name: str = "Медведь"
+        self._hp: int = 100
+        self._energy: int = 100
+        self._hunger: int = 0
+        self._sick: bool = False
 
     @property
     def status(self) -> dict[str, int]:
         """
-        Свойство для доступа ко всем состояниям тамагочи
+        Свойство для доступа ко всем состояниям тамагочи.
 
-        :return: словарь со всеми состояниями тамагочи
+        :return: словарь с ключами 'hunger', 'hp', 'energy' (int)
         """
-        return self._status
+        return {
+            "hunger": self._hunger,
+            "hp": self._hp,
+            "energy": self._energy,
+        }
 
-    @property
     def is_alive(self) -> bool:
         """
-        Метод для проверки жив ли тамагочи
+        Проверка, жив ли тамагочи.
 
-        :return: True если жив, иначе False
+        :return: True если здоровье больше 0
         """
-        return self.status['health'] > 0
+        return self._hp > 0
 
-    @property
     def is_sick(self) -> bool:
         """
-        Метод для проверки, не заболел ли тамагочи
+        Проверка, болен ли тамагочи.
 
-        :return: True если тамагочи болеет, иначе False
+        :return: True если тамагочи болеет
         """
-        return self.status['health'] < 50
+        return self._sick
 
+    @staticmethod
+    def tamagochi_update(func):
+        """
+        Декоратор для автоматического вызова update() после действия.
+
+        :param func: метод для обёртывания
+        :return: обёрнутый метод
+        """
+        def wrapper(self, *args, **kwargs):
+            func(self, *args, **kwargs)
+            self.update()
+        return wrapper
+
+    @tamagochi_update
     def feed(self, food: Food) -> None:
         """
-        Метод для кормления тамагочи
+        Кормит тамагочи выбранной едой.
+
+        Уменьшает голод на величину насыщения еды.
 
         :param food: объект еды для кормления
         """
-        self.status['hunger'] += food.satiety
+        self._hunger = max(0, self._hunger - food.satiety)
 
+    @tamagochi_update
     def play(self) -> None:
-        """Метод для игры с тамагочи"""
-        self.status['happiness'] += 10
-        self.status['hunger'] -= 10
+        """
+        Игра с тамагочи.
 
+        Увеличивает голод на 5 и уменьшает энергию на 10.
+        """
+        self._hunger = min(100, self._hunger + 5)
+        self._energy = max(0, self._energy - 10)
+
+    @tamagochi_update
     def rest(self) -> None:
-        """Метод для отдыха тамагочи"""
-        self.status['health'] += 30
-        self.status['hunger'] -= 10
+        """
+        Отдых тамагочи.
 
+        Восстанавливает энергию на 30 (на 15, если болен).
+        """
+        restore = 15 if self._sick else 30
+        self._energy = min(100, self._energy + restore)
+
+    @tamagochi_update
     def heal(self, medicine: Medicine) -> None:
         """
-        Метод для лечения тамагочи
+        Лечит тамагочи выбранной medicine.
+
+        Увеличивает uses лекарства на 1, восстанавливает hp,
+        снимает статус болезни.
 
         :param medicine: лекарство для лечения
         """
-        self.status['health'] += medicine.heal_hp
+        medicine.uses += 1
+        self._hp = min(100, self._hp + medicine.heal_hp)
+        self._sick = False
 
     def update(self) -> None:
         """
-        Метод для обновления состояний тамагочи.
-        Должен использоваться после каждого взаимодействия с тамагочи
+        Обновление состояния тамагочи (тик).
+
+        1. голод += 2 (макс. 100)
+        2. энергия -= 1 (мин. 0)
+        3. если голод==100 или энергия==0 → болезнь
+        4. если болен → здоровье -= 5 (мин. 0)
         """
-        raise NotImplementedError()
+        self._hunger = min(100, self._hunger + 2)
+        self._energy = max(0, self._energy - 1)
+
+        if self._hunger == 100 or self._energy == 0:
+            self._sick = True
+
+        if self._sick:
+            self._hp = max(0, self._hp - 5)
+
+        if self._hp == 0:
+            raise TamagochiIsGone("Тамагочи умер")
