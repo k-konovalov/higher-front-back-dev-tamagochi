@@ -6,7 +6,7 @@ from typing import Any
 from .tamagochi import AbstractTamagochi
 from .clicker import AbstractClicker
 from .models import Food, Medicine
-from .exceptions import NotEnoughMoney, TamagochiIsGone
+from .exceptions import NotEnoughMoney
 
 
 class AbstractGame(ABC):
