@@ -18,16 +18,8 @@ def main() -> None:
         Medicine(name='Ибупрофен', price=30, heal_hp=20, number_of_uses=1)
     ]
 
-    #  Вместо AbstractTamagochi импортируйте
-    #  и создайте инстанс от своей реализации
     tamagochi = BearTamagochi()
-
-    #  Вместо AbstractClicker импортируйте
-    #  и создайте инстанс от своей реализации
     clicker = DummyClicker(income_per_click=10)
-
-    #  Вместо AbstractGame импортируйте
-    #  и создайте инстанс от своей реализации
     game = Game(
         tamagochi,
         clicker,

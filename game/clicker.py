@@ -24,45 +24,30 @@ class AbstractClicker(ABC):
 
 
 class DummyClicker(AbstractClicker):
-    """Реализация кликера-работы"""
+    """Реализация кликера для заработка монет"""
 
-    def __init__(self, income_per_click: int) -> None:
+    def __init__(self, income_per_click: int = 10) -> None:
         """
-        Инициализатор класса
+        Инициализатор класса.
 
         :param income_per_click: количество монет, зарабатываемых за один клик
         """
         self._income_per_click = income_per_click
-        self._click_total = 0
+        self._clicks: int = 0
 
     def click(self) -> None:
         """
-        Метод клика для накапливания монет
+        Метод клика для накапливания счётчика кликов.
 
-        Увеличивает счётчик кликов и выводит заработок в консоль
+        Увеличивает счётчик кликов (монеты забирает игра).
         """
-        self._click_total += 1
-        print(f'Клик. Заработано {self.income_per_click * self._click_total} монет')  # noqa
-
-    def reset(self) -> None:
-        """Сбрасывает накопленное количество кликов до нуля"""
-        self._click_total = 0
+        self._clicks += 1
 
     @property
     def income_per_click(self) -> int:
         """
-        Свойство для доступа к количеству монет за клик
+        Свойство для доступа к количеству монет за клик.
 
         :return: количество монет, зарабатываемых за один клик
         """
         return self._income_per_click
-
-    @property
-    def get_clicks(self) -> int:
-        """
-        Свойство для доступа к общему количеству кликов
-
-        :return: суммарное число выполненных кликов
-        """
-        return self._click_total
-
