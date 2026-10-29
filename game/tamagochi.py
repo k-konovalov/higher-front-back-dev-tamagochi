@@ -132,7 +132,6 @@ class BearTamagochi(AbstractTamagochi):
             self.update()
         return wrapper
 
-    @tamagochi_update
     def feed(self, food: Food) -> None:
         """
         Кормит тамагочи выбранной едой.

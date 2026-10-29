@@ -284,15 +284,15 @@ class Game(AbstractGame):
         """
         Список еды в сумке.
 
-        :return: копия списка еды
+        :return: список еды
         """
-        return list(self._food_bag)
+        return self._food_bag
 
     @property
     def medicine(self) -> list[Medicine]:
         """
         Список лекарств в сумке.
 
-        :return: копия списка лекарств
+        :return: список лекарств
         """
-        return list(self._medicine_bag)
+        return self._medicine_bag
