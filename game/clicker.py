@@ -1,32 +1,37 @@
-"""Модуль с интерфейсом и реализацией кликера"""
+"""Модуль с интерфейсом и реализацией кликера."""
 
 from abc import ABC, abstractmethod
 
+from .constants import DEFAULT_INCOME_PER_CLICK
+
 
 class AbstractClicker(ABC):
-    """Интерфейс для кликера"""
+    """Интерфейс для кликера."""
 
     @abstractmethod
     def __init__(self) -> None:
-        """Абстрактный метод инициализации"""
+        """Абстрактный метод инициализации."""
         raise NotImplementedError
 
     @abstractmethod
     def click(self) -> None:
-        """Абстрактный метод клика для накапливания монет"""
+        """Абстрактный метод клика для накапливания монет."""
         raise NotImplementedError
 
     @property
     @abstractmethod
     def income_per_click(self) -> int:
-        """Абстрактное свойство для доступа к количеству монет за клик"""
+        """Абстрактное свойство для доступа к количеству монет за клик."""
         raise NotImplementedError
 
 
 class DummyClicker(AbstractClicker):
-    """Реализация кликера для заработка монет"""
+    """Реализация кликера для заработка монет."""
 
-    def __init__(self, income_per_click: int = 10) -> None:
+    def __init__(
+        self,
+        income_per_click: int = DEFAULT_INCOME_PER_CLICK,
+    ) -> None:
         """
         Инициализатор класса.
 
