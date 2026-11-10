@@ -106,8 +106,10 @@ ruff OK, 28 passed, ручные сценарии (смерть/монеты/п�
 - **Status:** complete
 
 #### Наблюдения (вне раунда ревью — решение за пользователем)
-- Числа остались в докстрингах `rest()` (30/15), `update()` (2/1/5/100), `work()` (5), `__init__` (0/100) —
-  тот же класс, что T2, но ревьюер указал только `play`
+- [x] Числа в докстрингах `rest()` (30/15 → REST_ENERGY_RESTORE/REST_ENERGY_RESTORE_SICK),
+      `update()` (2/1/5/100 → UPDATE_HUNGER_DELTA/UPDATE_ENERGY_COST/SICK_HP_COST/HUNGER_LIMIT),
+      `work()` (5 → WORK_CLICKS) и `__init__` (100/100 → INITIAL_ENERGY/INITIAL_HP) —
+      доработано по запросу 2026-11-10; ruff OK, 28 passed. `0` без константы — нейтральное значение.
 
 ## Resolved Questions (ответы пользователя, 2026-11-10)
 1. Исключения G4-G7: свёрнутая пара `EmptyCatalog` / `EmptyBag`;

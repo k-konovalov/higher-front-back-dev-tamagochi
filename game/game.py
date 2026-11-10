@@ -133,7 +133,8 @@ class Game(AbstractGame):
 
     def work(self) -> int:
         """
-        Идти на работу: 5 кликов, доход = 5 * income_per_click.
+        Идти на работу: WORK_CLICKS кликов,
+        доход = WORK_CLICKS * income_per_click.
 
         :return: количество заработанных монет
         """

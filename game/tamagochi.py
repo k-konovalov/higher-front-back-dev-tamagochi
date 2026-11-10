@@ -96,7 +96,7 @@ class BearTamagochi(AbstractTamagochi):
         Инициализатор класса.
 
         Создаёт питомца со стандартными параметрами:
-        голод=0 (сыт), энергия=100, здоровье=100, не болен.
+        голод=0 (сыт), энергия=INITIAL_ENERGY, здоровье=INITIAL_HP, не болен.
         """
         self.name: str = "Медведь"
         self._hp: int = INITIAL_HP
@@ -172,7 +172,8 @@ class BearTamagochi(AbstractTamagochi):
         """
         Отдых тамагочи.
 
-        Восстанавливает энергию на 30 (на 15, если болен).
+        Восстанавливает энергию на REST_ENERGY_RESTORE
+        (на REST_ENERGY_RESTORE_SICK, если болен).
         """
         restore = (
             REST_ENERGY_RESTORE_SICK
@@ -199,10 +200,10 @@ class BearTamagochi(AbstractTamagochi):
         """
         Обновление состояния тамагочи (тик).
 
-        1. голод += 2 (макс. 100)
-        2. энергия -= 1 (мин. 0)
-        3. если голод==100 или энергия==0 → болезнь
-        4. если болен → здоровье -= 5 (мин. 0)
+        1. голод += UPDATE_HUNGER_DELTA (макс. HUNGER_LIMIT)
+        2. энергия -= UPDATE_ENERGY_COST (мин. 0)
+        3. если голод==HUNGER_LIMIT или энергия==0 → болезнь
+        4. если болен → здоровье -= SICK_HP_COST (мин. 0)
         """
         self._hunger = min(HUNGER_LIMIT, self._hunger + UPDATE_HUNGER_DELTA)
         self._energy = max(0, self._energy - UPDATE_ENERGY_COST)
