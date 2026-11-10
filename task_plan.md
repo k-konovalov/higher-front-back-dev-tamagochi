@@ -6,7 +6,7 @@
 (решение пользователя, 2026-11-10). Докстринги и линтер — на конец.
 
 ## Next Step
-Phase 3: T1 (константы в tamagochi.py) → опц. WORK_CLICKS в game.py + убрать явный income_per_click в main.py → T3 (`Medicine.use()`).
+Phase 6: N1 (`STATUS_TEMPLATE` + `format(**dict)`) → N4 (`MENU` — одна строка модульного уровня).
 
 ## Карта ревью-комментариев (21 шт.; G9 — вне раунда)
 | ID | Файл (текущая строка) | Комментарий | Фаза |
@@ -52,9 +52,12 @@ Phase 3: T1 (константы в tamagochi.py) → опц. WORK_CLICKS в game
 - **Status:** complete
 
 ### Phase 3: Константы и Medicine.use()
-- [x] T1: константы вверху tamagochi.py (INITIAL_*, *_LIMIT, дельты play/rest/update/болезни) — ruff OK, 28 passed
-- [x] (опц.) game.py: `WORK_CLICKS = 5` в `work()`; main.py: `DummyClicker()` без явного income — ruff OK, 28 passed
+- [x] T1: константы (INITIAL_*, *_LIMIT, дельты play/rest/update/болезни) — ruff OK, 28 passed
+- [x] (опц.) `WORK_CLICKS = 5` в `work()`; main.py: `DummyClicker()` без явного income — ruff OK, 28 passed
 - [x] T3: `Medicine.use()` в models.py (не инкрементит при `is_empty()`); `heal()` → `medicine.use()` — ruff OK, 28 passed
+- [x] Постфактум (решение 2026-11-10): все константы перенесены в `game/constants.py`
+      (12 из tamagochi.py + WORK_CLICKS из game.py + DEFAULT_INCOME_PER_CLICK из clicker.py),
+      модули импортируют от туда — ruff OK, 28 passed
 - Проверка: ruff + pytest
 - Менторские темы: магические числа; инкапсуляция мутации модели
 - **Status:** complete
@@ -70,15 +73,17 @@ Phase 3: T1 (константы в tamagochi.py) → опц. WORK_CLICKS в game
 - **Status:** complete
 
 ### Phase 5: Исключения вместо print
-- [ ] Новые исключения `EmptyCatalog`, `EmptyBag` в exceptions.py (свёрнутая пара, решение 2026-11-10)
-- [ ] G4-G7: `raise` вместо `print/return` в buy_food/buy_medicine/feed_tamagochi/heal_tamagochi
-- [ ] N5: main — try/except (`NotEnoughMoney`, `EmptyCatalog`, `EmptyBag`, `TamagochiIsGone`) → `output = str(e)`; при смерти — завершить игру
-- [ ] N2: main.py:45 — `game.tamagochi.is_sick()` (is_sick — метод с HEAD 5e72fb9)
-- [ ] N3: main.py:48 — `if (not game.tamagochi.is_alive)` → смерть ловится через
-      `TamagochiIsGone` из `update()` в try/except (как N5)
-- Проверка: ruff + pytest (test_main_import_and_exit с «0» остаётся зелёным)
+- [x] Новые исключения `EmptyCatalog`, `EmptyBag` в exceptions.py (свёрнутая пара, решение 2026-11-10)
+- [x] G4-G7: `raise` вместо `print/return` в buy_food/buy_medicine/feed_tamagochi/heal_tamagochi
+- [x] N5+N3: main — match в try/except: `TamagochiIsGone` → «Тамагочи умер», break;
+      `NotEnoughMoney`/`EmptyCatalog`/`EmptyBag` → `output = str(e)`.
+      Блок `if (not game.tamagochi.is_alive)` удалён: смерть теперь всегда приходит
+      исключением из `update()`, который вызывается декоратором `@tamagochi_update`
+      после play/rest/heal (уточнение пользователя 2026-11-10: update в main не вызывается)
+- [x] N2: main — `game.tamagochi.is_sick()` (is_sick — метод с HEAD 5e72fb9)
+- Проверка: ruff + pytest (28 passed) + ручной прогон: смерть, нехватка монет, пустая сумка
 - Менторские темы: исключения vs ранние возвраты; кто бросает, кто ловит
-- **Status:** in progress
+- **Status:** complete
 
 ### Phase 6: Читаемость main
 - [ ] N1: `STATUS_TEMPLATE` с именованными плейсхолдерами + `print(STATUS_TEMPLATE.format(**game.get_status()))`
@@ -98,6 +103,7 @@ Phase 3: T1 (константы в tamagochi.py) → опц. WORK_CLICKS в game
    еда/лекарство различается текстом причины (`str(e)`).
 2. G8: копия лекарства — метод `Medicine.copy()` в models.py.
 3. (Бывш. вопрос о возвратах предмета/дохода из методов Game) — снят: G9 вне раунда.
+4. Константы — не в модулях, а в общем `game/constants.py` (решение пользователя).
 
 ## Decisions Made
 | Decision | Rationale |
@@ -109,6 +115,7 @@ Phase 3: T1 (константы в tamagochi.py) → опц. WORK_CLICKS в game
 | G2: копии `list(...)` при хранении и отдаче | Позиция ревьюера: каталог статичен, одного владельца нет |
 | Имена исключений: `EmptyCatalog`/`EmptyBag` | Ответ пользователя (свёрнутая пара) |
 | G8: `Medicine.copy()` | Ответ пользователя: копия инкапсулируется в модели |
+| Константы в `game/constants.py` | Решение пользователя: баланс игры — в одном модуле, не размазан по трём |
 
 ## Errors Encountered
 | Error | Attempt | Resolution |

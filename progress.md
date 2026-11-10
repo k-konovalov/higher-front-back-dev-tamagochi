@@ -13,6 +13,12 @@
   Замечено: main.py:48 `game.tamagochi.is_alive` — метод как свойство (всегда False) — закрывается N3.
 - Фаза 2 завершена (M1, T4, G3, C2); ruff + pytest зелёные после каждого шага,
   G3 проверен ручным прогоном (non-numeric input → повтор).
+- Фаза 3 завершена (T1, WORK_CLICKS, T3 `Medicine.use()`).
+- Решение пользователя: константы — в `game/constants.py`; создано
+  (12 из tamagochi.py + WORK_CLICKS + DEFAULT_INCOME_PER_CLICK),
+  три модуля импортируют — ruff OK, 28 passed.
+- Фаза 4 завершена (G1 `_tamagochi`+property, G2 копии каталога/сумок,
+  G8 `Medicine.copy()`) — часть дороботана после параллельных коммитов пользователя.
 
 ## Test Results
 | Test | Input | Expected | Actual | Status |
@@ -24,6 +30,9 @@
 | ruff+pytest | после G3 (game.py) | green | green | OK |
 | ручной прогон _pick | input "abc"→"1" | повтор запроса, покупка | как ожидается | OK |
 | ruff+pytest | после C2 (clicker.py) | green | green | OK |
+| ruff+pytest | после T1/WORK_CLICKS/T3 | green | green | OK |
+| ruff+pytest | после переноса в game/constants.py | green | All checks passed, 28 passed | OK |
+| ruff+pytest | после G1/G2/G8 (фаза 4) | green | All checks passed, 28 passed | OK |
 
 ## Error Log
 | Timestamp | Error | Attempt | Resolution |
@@ -33,13 +42,13 @@
 ## 5-Question Reboot Check
 | Question | Answer |
 |----------|--------|
-| Where am I? | Phase 2 complete, Phase 3 next (T1 → T3) |
-| Where am I going? | Phases 3–7 (карта в task_plan.md) |
+| Where am I? | Phase 4 complete, Phase 5 in progress (исключения) |
+| Where am I going? | Phases 5–7 (карта в task_plan.md) |
 | What's the goal? | Закрыть 20 «Надо исправить»; G9 вне раунда |
-| What have I learned? | findings.md; HEAD=5e72fb9 (F-4 review-1/2 уже в коде) |
-| What have I done? | M1, T4, G3, C2 — см. Phase 2 task_plan.md |
+| What have I learned? | findings.md; HEAD=5e72fb9; константы — в game/constants.py (решение пользователя) |
+| What have I done? | Фазы 2–4: M1, T4, G3, C2, T1, WORK_CLICKS, T3, G1, G2, G8, constants.py |
 
 ## Next Step
-Phase 3: T1 (константы в tamagochi.py: INITIAL_HP/INITIAL_ENERGY, HUNGER_LIMIT, дельты) →
-опц. `WORK_CLICKS` в game.py и убрать явный `income_per_click=10` в main.py →
-T3 (`Medicine.use()`, не инкрементить при `is_empty()`; `heal()` → `medicine.use()`).
+Phase 5: `EmptyCatalog`/`EmptyBag` в exceptions.py → G4-G7 (`raise` вместо print/return
+в buy_food/buy_medicine/feed_tamagochi/heal_tamagochi) → N5 (try/except в main) →
+N2 (`is_sick()`) → N3 (смерть через `TamagochiIsGone`).

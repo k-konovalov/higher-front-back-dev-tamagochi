@@ -1,18 +1,17 @@
-"""Модуль с интерфейсом и реализацией класса игры"""
+"""Модуль с интерфейсом и реализацией класса игры."""
 
 from abc import ABC, abstractmethod
 from typing import Any
 
+from .constants import WORK_CLICKS
 from .tamagochi import AbstractTamagochi
 from .clicker import AbstractClicker
 from .models import Food, Medicine
-from .exceptions import NotEnoughMoney
-
-WORK_CLICKS = 5
+from .exceptions import NotEnoughMoney, EmptyCatalog, EmptyBag
 
 
 class AbstractGame(ABC):
-    """Интерфейс для логики игры"""
+    """Интерфейс для логики игры."""
 
     @abstractmethod
     def __init__(
@@ -43,32 +42,32 @@ class AbstractGame(ABC):
 
     @abstractmethod
     def buy_food(self) -> None:
-        """Абстрактный метод для покупки еды"""
+        """Абстрактный метод для покупки еды."""
         raise NotImplementedError
 
     @abstractmethod
     def buy_medicine(self) -> None:
-        """Абстрактный метод для покупки лекарства"""
+        """Абстрактный метод для покупки лекарства."""
         raise NotImplementedError
 
     @abstractmethod
     def feed_tamagochi(self) -> None:
-        """Абстрактный метод для кормления тамагочи"""
+        """Абстрактный метод для кормления тамагочи."""
         raise NotImplementedError
 
     @abstractmethod
     def heal_tamagochi(self) -> None:
-        """Абстрактный метод для лечения тамагочи"""
+        """Абстрактный метод для лечения тамагочи."""
         raise NotImplementedError
 
     @abstractmethod
     def rest_tamagochi(self) -> None:
-        """Абстрактный метод для отдыха тамагочи"""
+        """Абстрактный метод для отдыха тамагочи."""
         raise NotImplementedError
 
     @abstractmethod
     def play_with_tamagochi(self) -> None:
-        """Абстрактный метод для игры с тамагочи"""
+        """Абстрактный метод для игры с тамагочи."""
         raise NotImplementedError
 
     @abstractmethod
@@ -102,7 +101,7 @@ class AbstractGame(ABC):
 
 
 class Game(AbstractGame):
-    """Реализация логики игры «Тамагочи»"""
+    """Реализация логики игры «Тамагочи»."""
 
     def __init__(
         self,
@@ -175,8 +174,7 @@ class Game(AbstractGame):
         При недостатке монет выбрасывает NotEnoughMoney.
         """
         if not self._all_food:
-            print("Нет доступной еды для покупки.")
-            return
+            raise EmptyCatalog("В каталоге нет еды для покупки.")
 
         idx = self._pick(self._all_food, "Доступная еда")
         if idx is None:
@@ -199,8 +197,7 @@ class Game(AbstractGame):
         При недостатке монет выбрасывает NotEnoughMoney.
         """
         if not self._all_medicine:
-            print("Нет доступных лекарств для покупки.")
-            return
+            raise EmptyCatalog("В каталоге нет лекарств для покупки.")
 
         idx = self._pick(self._all_medicine, "Доступные лекарства")
         if idx is None:
@@ -223,8 +220,7 @@ class Game(AbstractGame):
         Съеденный предмет удаляется из сумки.
         """
         if not self._food_bag:
-            print("В сумке нет еды.")
-            return
+            raise EmptyBag("В сумке нет еды.")
 
         idx = self._pick(self._food_bag, "Еда в сумке")
         if idx is None:
@@ -248,8 +244,7 @@ class Game(AbstractGame):
         ]
 
         if not self._medicine_bag:
-            print("В сумке нет лекарств.")
-            return
+            raise EmptyBag("В сумке нет лекарств.")
 
         idx = self._pick(self._medicine_bag, "Лекарства в сумке")
         if idx is None:

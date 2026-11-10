@@ -4,10 +4,28 @@ from game.models import Food, Medicine
 from game.tamagochi import BearTamagochi
 from game.clicker import DummyClicker
 from game.game import Game
+from game.exceptions import (
+    EmptyBag,
+    EmptyCatalog,
+    NotEnoughMoney,
+    TamagochiIsGone,
+)
+
+STATUS_TEMPLATE = (
+    "\nСтатус: голод {hunger}, здоровье {hp}, энергия {energy}, монет {coins}\n"
+)
+MENU = """1. Пойти на работу
+2. Купить еду
+3. Купить лекарство
+4. Покормить тамагочи
+5. Вылечить тамагочи
+6. Играть с тамагочи
+7. Отдых тамагочи
+0. Выход"""
 
 
 def main() -> None:
-    """Основная функция для запуска игры"""
+    """Основная функция для запуска игры."""
     all_food = [
         Food(name='Бургер', satiety=20, price=40),
         Food(name='Салат', satiety=10, price=20),
@@ -37,53 +55,45 @@ def main() -> None:
         print(f"Сумка с едой: {game.food}")
         print(f"Сумка с лекарствами: {game.medicine}")
 
-        status = game.get_status()
-        print(
-            f"\nСтатус: голод {status['hunger']}, здоровье {status['hp']},"
-            f"энергия {status['energy']}, монет {status['coins']}\n"
-        )
-        if game.tamagochi.is_sick:
+        print(STATUS_TEMPLATE.format(**game.get_status()))
+        if game.tamagochi.is_sick():
             print("=======Тамагочи болеет======")
             print("=======Отдых действует менее эффективно=======")
-        if (not game.tamagochi.is_alive):
+        print(MENU)
+
+        try:
+            match input("Выберите действие: "):
+                case "1":
+                    income = game.work()
+                    output = f'Вы заработали {income} монет'
+                case "2":
+                    game.buy_food()
+                    output = 'Вы сходили в магазин'
+                case "3":
+                    game.buy_medicine()
+                    output = 'Вы сходили в аптеку'
+                case "4":
+                    game.feed_tamagochi()
+                    output = 'Вы попытались покормить тамагочи'
+                case "5":
+                    game.heal_tamagochi()
+                    output = 'Вы попытались вылечить тамагочи'
+                case "6":
+                    game.play_with_tamagochi()
+                    output = 'Вы поиграли с питомцем'
+                case "7":
+                    game.rest_tamagochi()
+                    output = 'Питомец отдохнул'
+                case "0":
+                    break
+                case _:
+                    output = "Неверная команда"
+        except TamagochiIsGone:
             print("=======Тамагочи умер======")
             print("Живи теперь с этим. Или заведи нового.")
             break
-        print("1. Пойти на работу")
-        print("2. Купить еду")
-        print("3. Купить лекарство")
-        print("4. Покормить")
-        print("5. Вылечить")
-        print("6. Играть")
-        print("7. Отдых")
-        print("0. Выход")
-
-        match input("Выберите действие: "):
-            case "1":
-                income = game.work()
-                output = f'Вы заработали {income} монет'
-            case "2":
-                game.buy_food()
-                output = 'Вы сходили в магазин'
-            case "3":
-                game.buy_medicine()
-                output = 'Вы сходили в аптеку'
-            case "4":
-                game.feed_tamagochi()
-                output = 'Вы попытались покормить тамагочи'
-            case "5":
-                game.heal_tamagochi()
-                output = 'Вы попытались вылечить тамагочи'
-            case "6":
-                game.play_with_tamagochi()
-                output = 'Вы поиграли с питомцем'
-            case "7":
-                game.rest_tamagochi()
-                output = 'Питомец отдохнул'
-            case "0":
-                break
-            case _:
-                output = "Неверная команда"
+        except (NotEnoughMoney, EmptyCatalog, EmptyBag) as e:
+            output = str(e)
         os.system('clear')
     print('=======')
     print('The end!')

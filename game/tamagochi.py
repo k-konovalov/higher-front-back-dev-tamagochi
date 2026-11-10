@@ -1,30 +1,27 @@
-"""Модуль с интерфейсом и реализациями класса тамагочи"""
+"""Модуль с интерфейсом и реализациями класса тамагочи."""
 
 from abc import ABC, abstractmethod
 
+from .constants import (
+    ENERGY_LIMIT,
+    HP_LIMIT,
+    HUNGER_LIMIT,
+    INITIAL_ENERGY,
+    INITIAL_HP,
+    PLAY_ENERGY_COST,
+    PLAY_HUNGER_DELTA,
+    REST_ENERGY_RESTORE,
+    REST_ENERGY_RESTORE_SICK,
+    SICK_HP_COST,
+    UPDATE_ENERGY_COST,
+    UPDATE_HUNGER_DELTA,
+)
 from .models import Food, Medicine
 from .exceptions import TamagochiIsGone
 
-INITIAL_HP = 100
-INITIAL_ENERGY = 100
-HP_LIMIT = 100
-ENERGY_LIMIT = 100
-HUNGER_LIMIT = 100
-
-PLAY_HUNGER_DELTA = 5
-PLAY_ENERGY_COST = 10
-
-REST_ENERGY_RESTORE = 30
-REST_ENERGY_RESTORE_SICK = 15
-
-UPDATE_HUNGER_DELTA = 2
-UPDATE_ENERGY_COST = 1
-
-SICK_HP_COST = 5
-
 
 class AbstractTamagochi(ABC):
-    """Интерфейс логики тамагочи"""
+    """Интерфейс логики тамагочи."""
 
     @abstractmethod
     def feed(self, food: Food) -> None:
@@ -37,12 +34,12 @@ class AbstractTamagochi(ABC):
 
     @abstractmethod
     def play(self) -> None:
-        """Абстрактный метод для игры с тамагочи"""
+        """Абстрактный метод для игры с тамагочи."""
         raise NotImplementedError
 
     @abstractmethod
     def rest(self) -> None:
-        """Абстрактный метод для отдыха тамагочи"""
+        """Абстрактный метод для отдыха тамагочи."""
         raise NotImplementedError
 
     @abstractmethod
@@ -92,7 +89,7 @@ class AbstractTamagochi(ABC):
 
 
 class BearTamagochi(AbstractTamagochi):
-    """Реализация тамагочи — медвежонок"""
+    """Реализация тамагочи — медвежонок."""
 
     def __init__(self) -> None:
         """
