@@ -2,6 +2,8 @@
 
 from abc import ABC, abstractmethod
 
+DEFAULT_INCOME_PER_CLICK = 10
+
 
 class AbstractClicker(ABC):
     """Интерфейс для кликера"""
@@ -26,7 +28,10 @@ class AbstractClicker(ABC):
 class DummyClicker(AbstractClicker):
     """Реализация кликера для заработка монет"""
 
-    def __init__(self, income_per_click: int = 10) -> None:
+    def __init__(
+        self,
+        income_per_click: int = DEFAULT_INCOME_PER_CLICK,
+    ) -> None:
         """
         Инициализатор класса.
 

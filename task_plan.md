@@ -1,40 +1,38 @@
 # Task Plan: переработка «Тамагочи» по результатам ревью
 
 ## Goal
-Закрыть все 21 комментарий «Надо исправить» из 5 review-файлов и рекомендацию «Можно лучше»
-(вынести I/O из Game), двигаясь от маленьких изменений к крупным. Докстринги и линтер — на конец.
+Закрыть 20 комментариев «Надо исправить» из 5 review-файлов, двигаясь от маленьких изменений
+к крупным. Рекомендация «Можно лучше» (G9, вынести I/O из Game) — вне раунда
+(решение пользователя, 2026-11-10). Докстринги и линтер — на конец.
 
 ## Next Step
-Получить ответы на 3 вопроса (Key Questions), затем Phase 2: микро-фиксы M1 → T4 → G3 → C2
-(по одному изменению, ruff + pytest после каждого).
+Phase 3: T1 (константы в tamagochi.py) → опц. WORK_CLICKS в game.py + убрать явный income_per_click в main.py → T3 (`Medicine.use()`).
 
-## Current Phase
-Phase 2 (ждём ответы на 3 вопроса)
-
-## Карта ревью-комментариев (21 шт.)
+## Карта ревью-комментариев (21 шт.; G9 — вне раунда)
 | ID | Файл (текущая строка) | Комментарий | Фаза |
 |----|----------------------|-------------|------|
-| M1  | game/models.py:4,14-16,28,37 | убрать «учебные» комментарии | 2 |
-| T4  | game/tamagochi.py:117 | `self._hp == 0` → `is_alive()` | 2 |
-| G3  | game/game.py:145 | `ValueError` в `_pick` | 2 |
+| M1  | game/models.py:10-12,26-30 | убрать инлайн-комментарии полей (`# наименование` и т.п.) | 2 |
+| T4  | game/tamagochi.py:197 | `self._hp == 0` → `is_alive()` | 2 |
+| G3  | game/game.py:155 | `ValueError` в `_pick` | 2 |
 | C2  | game/clicker.py:29 | дефолт `10` → константа | 2 |
-| T1  | game/tamagochi.py:35-37,69,78,88,100,114 | магические числа → константы | 3 |
-| T3  | game/tamagochi.py:106 + models.py | `medicine.uses += 1` → `Medicine.use()` | 3 |
-| G1  | game/game.py:111 | `self.tamagochi` → `_tamagochi` | 4 |
-| G2  | game/game.py:112-113,279,298 | каталог/сумки по ссылке → копии | 4 |
-| G8  | game/game.py:194 | в сумку добавлять копию лекарства | 4 |
-| G4-G7 | game/game.py:157,180,204,229 | print «пусто» → исключения | 5 |
-| N5  | main.py:60 | перехват `NotEnoughMoney` (и новых) в main | 5 |
-| N2  | main.py:50 | `is_sick` → `is_sick()` | 5 |
-| N3  | main.py:51 | смерть: `TamagochiIsGone` из `update()`, main — try/except | 5 |
-| N1  | main.py:41-44 | статус: шаблон + `format(**dict)`, без локальной переменной | 6 |
+| T1  | game/tamagochi.py:88-90,143,152-153,162-163,188-195 | магические числа → константы | 3 |
+| T3  | game/tamagochi.py:175 + models.py | `medicine.uses += 1` → `Medicine.use()` | 3 |
+| G1  | game/game.py:120 | `self.tamagochi` → `_tamagochi` | 4 |
+| G2  | game/game.py:122-123,289,298 | каталог/сумки по ссылке → копии | 4 |
+| G8  | game/game.py:204 | в сумку добавлять копию лекарства (`Medicine.copy()`) | 4 |
+| G4-G7 | game/game.py:167,191,215,240 | print «пусто» → исключения | 5 |
+| N5  | main.py:61-86 | перехват `NotEnoughMoney` (и новых) в main | 5 |
+| N2  | main.py:45 | `is_sick` → `is_sick()` | 5 |
+| N3  | main.py:48-51 | смерть: `TamagochiIsGone` из `update()`, main — try/except | 5 |
+| N1  | main.py:40-44 | статус: шаблон + `format(**dict)`, без локальной переменной | 6 |
 | N4  | main.py:52-59 | меню: одна константа модульного уровня | 6 |
-| G9  | game/game.py (весь класс) | «Можно лучше»: I/O в main, Game принимает index | 7 |
-| C1  | game/clicker.py:27 | докстринг PEP257 (точка) + проверить весь проект | 8 |
-| T2  | game/tamagochi.py:69-71 | числа в докстринге `play` → ссылки на константы | 8 |
+| G9  | game/game.py (весь класс) | «Можно лучше»: I/O в main, Game принимает index | — (вне раунда) |
+| C1  | game/clicker.py:27 | докстринг PEP257 (точка) + проверить весь проект | 7 |
+| T2  | game/tamagochi.py:148-151 | числа в докстринге `play` → ссылки на константы | 7 |
 
-Базовая линия (2026-11-10, перевпроверена): `ruff check ./game` — OK; `pytest ./tests` — 28 passed.
-Код совпадает с версией из ревью (29.10).
+Базовая линия (2026-11-10, HEAD `5e72fb9 F-4: review-1 - 2`): `ruff check ./game` — OK;
+`pytest ./tests` — 28 passed.
+Докстринги и `__repr__` добавлены в F-4-коммитах (частичное закрытие C1); 20 «Надо исправить» остаются.
 
 ## Phases
 
@@ -46,75 +44,71 @@ Phase 2 (ждём ответы на 3 вопроса)
 - **Status:** complete
 
 ### Phase 2: Локальные микро-фиксы (по одному, ruff+pytest после каждого)
-- [ ] M1: models.py — убрать комментарии `# наименование` и т.п.
-- [ ] T4: `update()`: `if not self.is_alive(): raise TamagochiIsGone`
-- [ ] G3: `_pick()`: `try/except ValueError` → «неверный выбор», continue
-- [ ] C2: clicker.py: `DEFAULT_INCOME_PER_CLICK = 10` в дефолте аргумента
+- [x] M1: models.py — убраны 8 инлайн-комментариев полей (ruff OK, 28 passed)
+- [x] T4: tamagochi.py `update()`: `if self._hp == 0` → `if not self.is_alive()` (ruff OK, 28 passed)
+- [x] G3: game.py `_pick()`: `try/except ValueError` вокруг `int(choice)` → «Неверный выбор», continue (ruff OK, 28 passed, ручной прогон)
+- [x] C2: clicker.py: `DEFAULT_INCOME_PER_CLICK = 10` вверху модуля, дефолт аргумента — константа (ruff OK, 28 passed)
 - Менторские темы: защищённые атрибуты; обработка ошибки конвертации ввода
-- **Status:** pending
+- **Status:** complete
 
 ### Phase 3: Константы и Medicine.use()
-- [ ] T1: константы вверху tamagochi.py: начальные hp/energy, лимит голода, дельты play/rest/update/болезни
-- [ ] (опц.) game.py: `WORK_CLICKS = 5` в `work()`; main.py: убрать явный `income_per_click=10` (дефолт кликера)
-- [ ] T3: `Medicine.use()` в models.py (не инкрементить при `is_empty()`); `heal()` → `medicine.use()`
+- [x] T1: константы вверху tamagochi.py (INITIAL_*, *_LIMIT, дельты play/rest/update/болезни) — ruff OK, 28 passed
+- [x] (опц.) game.py: `WORK_CLICKS = 5` в `work()`; main.py: `DummyClicker()` без явного income — ruff OK, 28 passed
+- [x] T3: `Medicine.use()` в models.py (не инкрементит при `is_empty()`); `heal()` → `medicine.use()` — ruff OK, 28 passed
 - Проверка: ruff + pytest
 - Менторские темы: магические числа; инкапсуляция мутации модели
-- **Status:** pending
+- **Status:** complete
 
 ### Phase 4: Инкапсуляция Game
-- [ ] G1: `self._tamagochi` + read-only `@property tamagochi` (main.py:50-51 и тесты не ломаются)
-- [ ] G2: `__init__`: `list(all_food)` / `list(all_medicine)`; свойства `food`/`medicine` → `list(self._food_bag)` / `list(self._medicine_bag)`
-- [ ] G8: `buy_medicine`: добавить копию лекарства (механизм — вопрос 2)
-- Проверка: ruff + pytest
-- Менторские темы: public/protected, getter-property, копия списка vs копия объекта
-- **Status:** pending
+- [x] G1: `self._tamagochi` + read-only `@property tamagochi` — ruff OK, 28 passed
+- [x] G2: `__init__`: `list(all_food)` / `list(all_medicine)`; свойства `food`/`medicine` → `list(...)` — ruff OK, 28 passed
+- [x] G8: `Medicine.copy()` в models.py; `buy_medicine`: `self._medicine_bag.append(medicine.copy())` — ruff OK, 28 passed
+- Менторские темы: инкапсуляция; мутабельные коллекции по ссылке
+- Примечание: часть G1/G2 пользователь успел сделать параллельно в HEAD 5e72fb9
+  (`_coins`, `_food_bag`, `_all_food`); дороботаны property `tamagochi`, копии каталога
+  и свойств сумок, `Medicine.copy()`.
+- **Status:** complete
 
 ### Phase 5: Исключения вместо print
-- [ ] Новые исключения в exceptions.py (имена — вопрос 1)
+- [ ] Новые исключения `EmptyCatalog`, `EmptyBag` в exceptions.py (свёрнутая пара, решение 2026-11-10)
 - [ ] G4-G7: `raise` вместо `print/return` в buy_food/buy_medicine/feed_tamagochi/heal_tamagochi
-- [ ] N5: main — try/except (`NotEnoughMoney`, новые, `TamagochiIsGone`) вокруг действий и `update()` → `output = str(e)`; при смерти — завершить игру
-- [ ] N2: `game.tamagochi.is_sick()`
-- [ ] N3: удалить `if not game.tamagochi.is_alive` из цикла main (смерть сигнализирует `update()`)
+- [ ] N5: main — try/except (`NotEnoughMoney`, `EmptyCatalog`, `EmptyBag`, `TamagochiIsGone`) → `output = str(e)`; при смерти — завершить игру
+- [ ] N2: main.py:45 — `game.tamagochi.is_sick()` (is_sick — метод с HEAD 5e72fb9)
+- [ ] N3: main.py:48 — `if (not game.tamagochi.is_alive)` → смерть ловится через
+      `TamagochiIsGone` из `update()` в try/except (как N5)
 - Проверка: ruff + pytest (test_main_import_and_exit с «0» остаётся зелёным)
 - Менторские темы: исключения vs ранние возвраты; кто бросает, кто ловит
-- **Status:** pending
+- **Status:** in progress
 
 ### Phase 6: Читаемость main
 - [ ] N1: `STATUS_TEMPLATE` с именованными плейсхолдерами + `print(STATUS_TEMPLATE.format(**game.get_status()))`
-- [ ] N4: `MENU` — одна строка модульного уровня (join "\n"), один print вместо восьми
+- [ ] N4: `MENU` — одна строка модульного уровня, один print вместо восьми
 - Проверка: ruff + pytest + ручной прогон
 - **Status:** pending
 
-### Phase 7: Крупный рефактор — I/O вне Game (G9, «Можно лучше»)
-- [ ] AbstractGame: `buy_food(index)`, `buy_medicine(index)`, `feed_tamagochi(index)`, `heal_tamagochi(index)`
-- [ ] Game: убрать `_pick` и все print/input; поведение методов — вопрос 3; исключения при неверном index / пустой сумке
-- [ ] main: меню из `game.food`/`game.medicine`, чтение и разбор выбора (ValueError, вне диапазона, «0» = отмена), вызов по index, вывод результата
-- [ ] Тесты: test_logic.py — `game.buy_food(0)` и т.д. вместо `fake_inputs`
-- Проверка: ruff + pytest + ручной прогон игры
-- Менторские темы: разделение логики и интерфейса (SRP); как подключится GUI
-- **Status:** pending
-
-### Phase 8: Техническая доводка
-- [ ] C1: докстринг `DummyClicker` (добавить точку); прогнать PEP257-чеклист по всему проекту (models, exceptions, модульные докстринги)
+### Phase 7: Техническая доводка (бывшая фаза 8)
+- [ ] C1: докстринг `DummyClicker` (добавить точку); PEP257-чеклист по всему проекту (models, exceptions, модульные докстринги)
 - [ ] T2: докстринг `play()` — ссылки на константы вместо чисел
 - [ ] (опц.) докстринг на обёртке `tamagochi_update`
-- [ ] Финал: ruff check ./game, pytest ./tests, ручной прогон, проход по карте комментариев (все закрыты)
+- [ ] Финал: ruff check ./game, pytest ./tests, ручной прогон, проход по карте (20/20 закрыты)
 - **Status:** pending
 
-## Key Questions
-1. Имена исключений для пустого каталога/сумки (G4-G7): 4 отдельных
-   (NoFoodInCatalog/NoMedicineInCatalog/NoFoodInBag/NoMedicineInBag) или свёрнутая пара (EmptyCatalog/EmptyBag)?
-2. G8: какой механизм копии лекарства — `copy.copy`, `dataclasses.replace` или метод `Medicine.copy()`?
-3. Фаза 7: возвращать ли из методов Game предмет/доход, чтобы main печатал «Куплено: ...»,
-   или вывод оставить через print'ы Game (только ввод/выбор вынести в main)?
+## Resolved Questions (ответы пользователя, 2026-11-10)
+1. Исключения G4-G7: свёрнутая пара `EmptyCatalog` / `EmptyBag`;
+   еда/лекарство различается текстом причины (`str(e)`).
+2. G8: копия лекарства — метод `Medicine.copy()` в models.py.
+3. (Бывш. вопрос о возвратах предмета/дохода из методов Game) — снят: G9 вне раунда.
 
 ## Decisions Made
 | Decision | Rationale |
 |----------|-----------|
-| Порядок фаз: маленькое → крупное (2→3→4→5→6→7→8) | Запрос пользователя |
-| G1: `_tamagochi` + read-only `@property tamagochi` | Не рвать main.py:50-51 и тесты в фазах 4–6; полное отделение main'а от объекта тамагочи в фазе 7 |
+| G9 («Можно лучше») вне раунда | Решение пользователя 2026-11-10; `_pick` остаётся в Game, тесты с `fake_inputs` не трогаем |
+| Порядок фаз: маленькое → крупное (2→3→4→5→6→7) | Запрос пользователя |
+| G1: `_tamagochi` + read-only `@property tamagochi` | Не рвать main.py:45,48 и тесты в фазах 4–6 |
 | T3: `Medicine.use()` не инкрементирует `uses` при `is_empty()` | Пустое лекарство не «сгорает» повторно |
-| G2: копии `list(...)` при хранении и отдаче | Позиция ревьюера: каталог статичен, одного владельца нет; при появлении ShopService — ссылка |
+| G2: копии `list(...)` при хранении и отдаче | Позиция ревьюера: каталог статичен, одного владельца нет |
+| Имена исключений: `EmptyCatalog`/`EmptyBag` | Ответ пользователя (свёрнутая пара) |
+| G8: `Medicine.copy()` | Ответ пользователя: копия инкапсулируется в модели |
 
 ## Errors Encountered
 | Error | Attempt | Resolution |
@@ -123,6 +117,5 @@ Phase 2 (ждём ответы на 3 вопроса)
 
 ## Notes
 - После каждого изменения: `.venv/bin/ruff check ./game`, `.venv/bin/pytest ./tests`.
-- Детальный первоначальный план: `.planning/2026-11-10-review-game-py-md/` (создан в тот же день);
-  корневые файлы — рабочая копия, обновляем их.
+- Первоначальный план: `.planning/2026-11-10-review-game-py-md/`; корневые файлы — рабочая копия, обновляем их.
 - Роль ИИ: наставник-тьютор — объяснять концепции ООП/Python, направлять; код писать по запросу.

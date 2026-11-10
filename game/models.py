@@ -7,9 +7,9 @@ from dataclasses import dataclass
 class Food:
     """Модель объекта еды"""
 
-    name: str  # наименование
-    satiety: int  # на сколько единиц утоляет голод
-    price: int  # стоимость
+    name: str
+    satiety: int
+    price: int
 
     def __repr__(self) -> str:
         """Метод для красивого принтинга объекта"""
@@ -23,11 +23,11 @@ class Food:
 class Medicine:
     """Модель объекта лекарства"""
 
-    name: str  # наименование
-    price: int  # стоимость
-    heal_hp: int  # сколько лечит HP
-    number_of_uses: int  # максимальное количество применений
-    uses: int = 0  # текущее количество применений
+    name: str
+    price: int
+    heal_hp: int
+    number_of_uses: int
+    uses: int = 0
 
     def is_empty(self) -> bool:
         """
@@ -36,6 +36,30 @@ class Medicine:
         :return: True если осталось, иначе False
         """
         return self.uses >= self.number_of_uses
+
+    def copy(self) -> "Medicine":
+        """
+        Копия лекарства с текущим состоянием.
+
+        :return: новый экземпляр Medicine
+        """
+        return Medicine(
+            name=self.name,
+            price=self.price,
+            heal_hp=self.heal_hp,
+            number_of_uses=self.number_of_uses,
+            uses=self.uses,
+        )
+
+    def use(self) -> None:
+        """
+        Применяет лекарство: увеличивает счётчик применений.
+
+        Если лекарство уже не осталось, количество применений
+        не меняется.
+        """
+        if not self.is_empty():
+            self.uses += 1
 
     def __repr__(self) -> str:
         """Метод для красивого принтинга объекта"""

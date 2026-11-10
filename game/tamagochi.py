@@ -5,6 +5,23 @@ from abc import ABC, abstractmethod
 from .models import Food, Medicine
 from .exceptions import TamagochiIsGone
 
+INITIAL_HP = 100
+INITIAL_ENERGY = 100
+HP_LIMIT = 100
+ENERGY_LIMIT = 100
+HUNGER_LIMIT = 100
+
+PLAY_HUNGER_DELTA = 5
+PLAY_ENERGY_COST = 10
+
+REST_ENERGY_RESTORE = 30
+REST_ENERGY_RESTORE_SICK = 15
+
+UPDATE_HUNGER_DELTA = 2
+UPDATE_ENERGY_COST = 1
+
+SICK_HP_COST = 5
+
 
 class AbstractTamagochi(ABC):
     """Интерфейс логики тамагочи"""
@@ -85,8 +102,8 @@ class BearTamagochi(AbstractTamagochi):
         голод=0 (сыт), энергия=100, здоровье=100, не болен.
         """
         self.name: str = "Медведь"
-        self._hp: int = 100
-        self._energy: int = 100
+        self._hp: int = INITIAL_HP
+        self._energy: int = INITIAL_ENERGY
         self._hunger: int = 0
         self._sick: bool = False
 
@@ -149,8 +166,8 @@ class BearTamagochi(AbstractTamagochi):
 
         Увеличивает голод на 5 и уменьшает энергию на 10.
         """
-        self._hunger = min(100, self._hunger + 5)
-        self._energy = max(0, self._energy - 10)
+        self._hunger = min(HUNGER_LIMIT, self._hunger + PLAY_HUNGER_DELTA)
+        self._energy = max(0, self._energy - PLAY_ENERGY_COST)
 
     @tamagochi_update
     def rest(self) -> None:
@@ -159,21 +176,25 @@ class BearTamagochi(AbstractTamagochi):
 
         Восстанавливает энергию на 30 (на 15, если болен).
         """
-        restore = 15 if self._sick else 30
-        self._energy = min(100, self._energy + restore)
+        restore = (
+            REST_ENERGY_RESTORE_SICK
+            if self._sick
+            else REST_ENERGY_RESTORE
+        )
+        self._energy = min(ENERGY_LIMIT, self._energy + restore)
 
     @tamagochi_update
     def heal(self, medicine: Medicine) -> None:
         """
         Лечит тамагочи выбранной medicine.
 
-        Увеличивает uses лекарства на 1, восстанавливает hp,
+        Применяет лекарство, восстанавливает hp,
         снимает статус болезни.
 
         :param medicine: лекарство для лечения
         """
-        medicine.uses += 1
-        self._hp = min(100, self._hp + medicine.heal_hp)
+        medicine.use()
+        self._hp = min(HP_LIMIT, self._hp + medicine.heal_hp)
         self._sick = False
 
     def update(self) -> None:
@@ -185,14 +206,14 @@ class BearTamagochi(AbstractTamagochi):
         3. если голод==100 или энергия==0 → болезнь
         4. если болен → здоровье -= 5 (мин. 0)
         """
-        self._hunger = min(100, self._hunger + 2)
-        self._energy = max(0, self._energy - 1)
+        self._hunger = min(HUNGER_LIMIT, self._hunger + UPDATE_HUNGER_DELTA)
+        self._energy = max(0, self._energy - UPDATE_ENERGY_COST)
 
-        if self._hunger == 100 or self._energy == 0:
+        if self._hunger == HUNGER_LIMIT or self._energy == 0:
             self._sick = True
 
         if self._sick:
-            self._hp = max(0, self._hp - 5)
+            self._hp = max(0, self._hp - SICK_HP_COST)
 
-        if self._hp == 0:
+        if not self.is_alive():
             raise TamagochiIsGone("Тамагочи умер")

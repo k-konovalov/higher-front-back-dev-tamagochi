@@ -8,6 +8,8 @@ from .clicker import AbstractClicker
 from .models import Food, Medicine
 from .exceptions import NotEnoughMoney
 
+WORK_CLICKS = 5
+
 
 class AbstractGame(ABC):
     """Интерфейс для логики игры"""
@@ -117,13 +119,18 @@ class Game(AbstractGame):
         :param all_food: все доступные варианты еды
         :param all_medicine: все доступные варианты лекарств
         """
-        self.tamagochi = tamagochi
+        self._tamagochi = tamagochi
         self._clicker = clicker
-        self._all_food = all_food
-        self._all_medicine = all_medicine
+        self._all_food = list(all_food)
+        self._all_medicine = list(all_medicine)
         self._coins: int = 0
         self._food_bag: list[Food] = []
         self._medicine_bag: list[Medicine] = []
+
+    @property
+    def tamagochi(self) -> AbstractTamagochi:
+        """Доступ к питомцу (только чтение)."""
+        return self._tamagochi
 
     def work(self) -> int:
         """
@@ -131,8 +138,8 @@ class Game(AbstractGame):
 
         :return: количество заработанных монет
         """
-        income = 5 * self._clicker.income_per_click
-        for _ in range(5):
+        income = WORK_CLICKS * self._clicker.income_per_click
+        for _ in range(WORK_CLICKS):
             self._clicker.click()
         self._coins += income
         return income
@@ -152,7 +159,11 @@ class Game(AbstractGame):
             choice = input("Ваш выбор: ")
             if choice == "0":
                 return None
-            idx = int(choice) - 1
+            try:
+                idx = int(choice) - 1
+            except ValueError:
+                print("Неверный выбор. Введите номер из меню или 0.")
+                continue
             if idx in range(0, len(items)):
                 return idx
 
@@ -201,7 +212,7 @@ class Game(AbstractGame):
                 f"Не хватает монет: нужно {medicine.price}, есть {self._coins}."
             )
         self._coins -= medicine.price
-        self._medicine_bag.append(medicine)
+        self._medicine_bag.append(medicine.copy())
         print(f"Куплено: {medicine}")
 
     def feed_tamagochi(self) -> None:
@@ -220,7 +231,7 @@ class Game(AbstractGame):
             return
 
         food = self._food_bag.pop(idx)
-        self.tamagochi.feed(food)
+        self._tamagochi.feed(food)
         print(f"Питомец съел: {food}")
 
     def heal_tamagochi(self) -> None:
@@ -245,7 +256,7 @@ class Game(AbstractGame):
             return
 
         medicine = self._medicine_bag.pop(idx)
-        self.tamagochi.heal(medicine)
+        self._tamagochi.heal(medicine)
         print(f"Применено: {medicine}")
 
         if medicine.is_empty():
@@ -257,7 +268,7 @@ class Game(AbstractGame):
 
         Восстанавливает энергию питомца.
         """
-        self.tamagochi.rest()
+        self._tamagochi.rest()
         print("Питомец отдохнул")
 
     def play_with_tamagochi(self) -> None:
@@ -266,7 +277,7 @@ class Game(AbstractGame):
 
         Меняет состояние питомца (голод, энергия).
         """
-        self.tamagochi.play()
+        self._tamagochi.play()
         print("Вы поиграли с питомцем")
 
     def get_status(self) -> dict[str, Any]:
@@ -286,7 +297,7 @@ class Game(AbstractGame):
 
         :return: список еды
         """
-        return self._food_bag
+        return list(self._food_bag)
 
     @property
     def medicine(self) -> list[Medicine]:
@@ -295,4 +306,4 @@ class Game(AbstractGame):
 
         :return: список лекарств
         """
-        return self._medicine_bag
+        return list(self._medicine_bag)

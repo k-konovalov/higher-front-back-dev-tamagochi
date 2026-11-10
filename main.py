@@ -19,7 +19,7 @@ def main() -> None:
     ]
 
     tamagochi = BearTamagochi()
-    clicker = DummyClicker(income_per_click=10)
+    clicker = DummyClicker()
     game = Game(
         tamagochi,
         clicker,
