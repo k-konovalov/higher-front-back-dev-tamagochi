@@ -26,7 +26,7 @@ class AbstractTamagochi(ABC):
     @abstractmethod
     def feed(self, food: Food) -> None:
         """
-        Абстрактный метод для кормления тамагочи
+        Абстрактный метод для кормления тамагочи.
 
         :param food: объект еды для кормления
         """
@@ -45,7 +45,7 @@ class AbstractTamagochi(ABC):
     @abstractmethod
     def heal(self, medicine: Medicine) -> None:
         """
-        Абстрактный метод для лечения тамагочи
+        Абстрактный метод для лечения тамагочи.
 
         :param medicine: лекарство для лечения
         """
@@ -55,7 +55,7 @@ class AbstractTamagochi(ABC):
     @abstractmethod
     def status(self) -> dict[str, int]:
         """
-        Абстрактное свойство для доступа ко всем состояниям тамагочи
+        Абстрактное свойство для доступа ко всем состояниям тамагочи.
 
         :return: словарь со всеми состояниями тамагочи
         """
@@ -64,7 +64,7 @@ class AbstractTamagochi(ABC):
     @abstractmethod
     def is_alive(self) -> bool:
         """
-        Абстрактный метод для проверки жив ли тамагочи
+        Абстрактный метод для проверки жив ли тамагочи.
 
         :return: True если жив, иначе False
         """
@@ -73,7 +73,7 @@ class AbstractTamagochi(ABC):
     @abstractmethod
     def is_sick(self) -> bool:
         """
-        Абстрактный метод для проверки, не заболел ли тамагочи
+        Абстрактный метод для проверки, не заболел ли тамагочи.
 
         :return: True если тамагочи болеет, иначе False
         """
@@ -161,7 +161,8 @@ class BearTamagochi(AbstractTamagochi):
         """
         Игра с тамагочи.
 
-        Увеличивает голод на 5 и уменьшает энергию на 10.
+        Увеличивает голод на PLAY_HUNGER_DELTA
+        и уменьшает энергию на PLAY_ENERGY_COST.
         """
         self._hunger = min(HUNGER_LIMIT, self._hunger + PLAY_HUNGER_DELTA)
         self._energy = max(0, self._energy - PLAY_ENERGY_COST)
